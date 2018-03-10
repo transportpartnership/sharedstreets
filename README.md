@@ -16,6 +16,7 @@ The builder application is built on Apache Flink. If memory requirements exceed 
  
 
 **Roadmap**
+
 This library supports bulk processing from OSM PBF data. Support for GIS data processing and conflation has been moved to [client libraries and tools](https://github.com/sharedstreets/sharedstreets-conflator).
 
 - [*v0.1:*](https://github.com/sharedstreets/sharedstreets-builder/releases/tag/0.1-preview) OSM support
