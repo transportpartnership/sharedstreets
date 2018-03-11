@@ -21,4 +21,5 @@ This library supports bulk processing from OSM PBF data. Support for GIS data pr
 
 - [*v0.1:*](https://github.com/sharedstreets/sharedstreets-builder/releases/tag/0.1-preview) OSM support
 - *v0.2:* Adding streetnames and improved OSM Tag filtering (changes pending in [PR #11](https://github.com/sharedstreets/sharedstreets-builder/pull/11))
+- v0.3 Add intersection turn restrictions 
 
