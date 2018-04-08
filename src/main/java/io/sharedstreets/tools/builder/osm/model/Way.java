@@ -50,6 +50,13 @@ public class Way extends SpatialEntity {
 
     }
 
+    public String getName() {
+
+        if(fields.containsKey("name"))
+             return fields.get("name").trim();
+        else
+            return "";
+    }
 
     public ROAD_CLASS roadClass() {
 
@@ -67,8 +74,21 @@ public class Way extends SpatialEntity {
             return ROAD_CLASS.ClassUnclassified;
         else if (fields.containsKey("highway") && fields.get("highway").toLowerCase().trim().startsWith("residential"))
             return ROAD_CLASS.ClassResidential;
-        else if (fields.containsKey("highway") && fields.get("highway").toLowerCase().trim().startsWith("service"))
-            return ROAD_CLASS.ClassService;
+        else if (fields.containsKey("highway") && fields.get("highway").toLowerCase().trim().startsWith("service")) {
+
+            // attempt to exclude parking lots, driveways and other private driveways to keep just public services roads
+            // not consistently mapped in OSM... https://taginfo.openstreetmap.org/keys/?key=service#values
+            if (fields.containsKey("service") && (fields.get("service").toLowerCase().trim().startsWith("parking") ||
+                    fields.get("service").toLowerCase().trim().startsWith("driveway") ||
+                    fields.get("service").toLowerCase().trim().startsWith("drive-through")))
+                return ROAD_CLASS.ClassOther;
+            else
+                return ROAD_CLASS.ClassService;
+
+
+        }
+        else if (fields.containsKey("highway") && fields.get("highway").toLowerCase().trim().startsWith("living_street"))
+            return ROAD_CLASS.ClassResidential;
         else
             return ROAD_CLASS.ClassOther;
     }
