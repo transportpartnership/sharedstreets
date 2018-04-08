@@ -24,18 +24,14 @@ public class SharedStreetsOSMMetadata implements Serializable {
         public Boolean roundabout;
         public Boolean link;
         public Long[] nodeIds;
-        public String name;
 
-        public WaySectionMetadata( WaySection section, boolean storeWaySegmentNames) {
+        public WaySectionMetadata( WaySection section) {
             this.wayId = section.wayId;
 
             this.roadClass = section.roadClass;
             this.oneWay = section.oneWay;
             this.roundabout = section.roundabout;
             this.link = section.link;
-
-            if(storeWaySegmentNames)
-                this.name = section.name;
 
             this.nodeIds = new Long[section.nodes.length];
 
@@ -46,7 +42,6 @@ public class SharedStreetsOSMMetadata implements Serializable {
     }
 
     public UniqueId geometryId;
-    public String name;
     public WaySectionMetadata[] waySections;
 
 
@@ -58,12 +53,9 @@ public class SharedStreetsOSMMetadata implements Serializable {
 
         SharedStreetsProto.SharedStreetsMetadata.Builder metadata = SharedStreetsProto.SharedStreetsMetadata.newBuilder();
 
-        metadata.setGeometryId(this.geometryId.toString());
+        metadata.setGeometryID(this.geometryId.toString());
 
         SharedStreetsProto.OSMMetadata.Builder osmMetadata = SharedStreetsProto.OSMMetadata.newBuilder();
-
-        if(this.name != null)
-            osmMetadata.setName(this.name);
 
         for(SharedStreetsOSMMetadata.WaySectionMetadata waySectionMetadata : this.waySections) {
             SharedStreetsProto.WaySection.Builder waySection = SharedStreetsProto.WaySection.newBuilder();
@@ -73,9 +65,6 @@ public class SharedStreetsOSMMetadata implements Serializable {
             waySection.setOneWay(waySectionMetadata.oneWay);
             waySection.setLink(waySectionMetadata.link);
             waySection.setRoundabout(waySectionMetadata.roundabout);
-
-            if(waySectionMetadata.name != null)
-                waySection.setName(waySectionMetadata.name);
 
             for(long nodeId : waySectionMetadata.nodeIds) {
                 waySection.addNodeIds(nodeId);
@@ -98,27 +87,9 @@ public class SharedStreetsOSMMetadata implements Serializable {
 
         waySections = new WaySectionMetadata[segment.waySections.length];
 
-        // store WaySegement names only if more than one segment or segments with different names
-        boolean storeWaySegmentNames = false;
-        String lastSegmentName = null;
-        for(WaySection waySection : segment.waySections) {
-
-            if(lastSegmentName == null) {
-                lastSegmentName = waySection.name;
-            }
-            else {
-                if(!lastSegmentName.equals(waySection.name))
-                    storeWaySegmentNames = true;
-            }
-        }
-
-        if(!storeWaySegmentNames)
-            this.name = lastSegmentName;
-
-
         int i = 0;
         for(WaySection section : segment.waySections) {
-            waySections[i] = new WaySectionMetadata(section, storeWaySegmentNames);
+            waySections[i] = new WaySectionMetadata(section);
             i++;
         }
     }

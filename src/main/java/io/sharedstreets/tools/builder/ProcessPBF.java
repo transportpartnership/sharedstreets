@@ -1,7 +1,5 @@
 package io.sharedstreets.tools.builder;
 
-import io.sharedstreets.data.SharedStreetsGeometry;
-import io.sharedstreets.tools.builder.osm.model.Way;
 import io.sharedstreets.tools.builder.tiles.JSONTileOutputFormat;
 import io.sharedstreets.tools.builder.tiles.ProtoTileOutputFormat;
 import io.sharedstreets.tools.builder.tiles.TilableData;
@@ -11,19 +9,13 @@ import io.sharedstreets.tools.builder.transforms.BaseSegments;
 import io.sharedstreets.tools.builder.transforms.SharedStreetData;
 import io.sharedstreets.tools.builder.util.geo.TileId;
 import org.apache.commons.cli.*;
-import org.apache.flink.api.common.functions.FilterFunction;
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
-import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 
-import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.util.ArrayList;
 
 
 public class ProcessPBF {
@@ -111,30 +103,19 @@ public class ProcessPBF {
         // load osm data from PBF input
         OSMDataStream dataStream = new OSMDataStream(inputFile, env);
 
-        // list of way classes for export tiles (must be in sequential order from least to most filtered)
-        ArrayList<Way.ROAD_CLASS> filteredClasses = new ArrayList<>();
-        filteredClasses.add(Way.ROAD_CLASS.ClassService);
-        filteredClasses.add(Way.ROAD_CLASS.ClassUnclassified);
-        filteredClasses.add(Way.ROAD_CLASS.ClassSecondary);
-        filteredClasses.add(Way.ROAD_CLASS.ClassMotorway);
+        // create OSM intersections
+        Intersections intersections = new Intersections(dataStream);
 
-        for(Way.ROAD_CLASS filteredClass : filteredClasses) {
+        // build internal model for street network
+        BaseSegments segments = new BaseSegments(dataStream, intersections);
 
-            OSMDataStream.FilteredWays filteredWays = dataStream.getFilteredWays(filteredClass);
+        // build sharedstreets references, geometries, intersections and metadata
+        SharedStreetData streets = new SharedStreetData(segments);
 
-            // create OSM intersections
-            Intersections intersections = new Intersections(filteredWays);
+        ProtoTileOutputFormat outputFormat = new ProtoTileOutputFormat<Tuple2<TileId, TilableData>>(outputPath);
 
-            // build internal model for street network
-            BaseSegments segments = new BaseSegments(filteredWays, intersections);
+        streets.mergedData(zLevel).output(outputFormat);
 
-            // build sharedstreets references, geometries, intersections and metadata
-            SharedStreetData streets = new SharedStreetData(segments);
-
-            ProtoTileOutputFormat outputFormat = new ProtoTileOutputFormat<Tuple2<TileId, TilableData>>(outputPath, filteredClass);
-
-            streets.mergedData(zLevel).output(outputFormat);
-        }
 
         env.execute();
 

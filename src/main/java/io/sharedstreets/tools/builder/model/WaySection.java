@@ -7,7 +7,6 @@ import io.sharedstreets.tools.builder.osm.model.Way;
 public class WaySection {
 
     public Long wayId;
-    public String name;
     public boolean oneWay;
     public boolean roundabout;
     public boolean link;

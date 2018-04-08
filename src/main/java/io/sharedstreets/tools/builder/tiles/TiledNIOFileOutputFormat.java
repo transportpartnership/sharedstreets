@@ -1,6 +1,5 @@
 package io.sharedstreets.tools.builder.tiles;
 
-import io.sharedstreets.tools.builder.osm.model.Way;
 import io.sharedstreets.tools.builder.util.geo.TileId;
 import org.apache.flink.api.common.io.RichOutputFormat;
 import org.apache.flink.configuration.Configuration;
@@ -109,12 +108,10 @@ public abstract class TiledNIOFileOutputFormat<IT> extends RichOutputFormat<IT> 
     String fileType;
 
     String outputFilePath;
-    Way.ROAD_CLASS filteredClass;
 
-    public TiledNIOFileOutputFormat(String outputPath, String fileType, Way.ROAD_CLASS filteredClass) {
+    public TiledNIOFileOutputFormat(String outputPath, String fileType) {
         this.outputFilePath = outputPath;
         this.fileType = fileType;
-        this.filteredClass = filteredClass;
     }
 
 
@@ -141,7 +138,7 @@ public abstract class TiledNIOFileOutputFormat<IT> extends RichOutputFormat<IT> 
 
     public void writeRecord(TileId tileId, String recordType, byte[] data) throws IOException {
 
-        Path filePath = Paths.get(this.outputFilePath, (String)tileId.toString() + "." + recordType + "." + filteredClass.getValue() + "." + fileType);
+        Path filePath = Paths.get(this.outputFilePath, (String)tileId.toString() + "." + recordType + "." + fileType);
 
         String key = filePath.toAbsolutePath().toString();
 

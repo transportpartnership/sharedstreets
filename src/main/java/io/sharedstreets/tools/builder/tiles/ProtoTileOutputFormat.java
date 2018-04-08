@@ -20,7 +20,6 @@ package io.sharedstreets.tools.builder.tiles;
 
 
 import io.sharedstreets.data.SharedStreetsGeometry;
-import io.sharedstreets.tools.builder.osm.model.Way;
 import io.sharedstreets.tools.builder.util.geo.TileId;
 import org.apache.flink.annotation.Public;
 import org.apache.flink.api.java.tuple.Tuple2;
@@ -37,8 +36,8 @@ import java.nio.file.Path;
 @Public
 public class ProtoTileOutputFormat<IT extends  Tuple2<TileId, TilableData>> extends TiledNIOFileOutputFormat<IT> {
 
-    public ProtoTileOutputFormat(String outputPath, Way.ROAD_CLASS filteredClass) {
-        super(outputPath, "pbf", filteredClass);
+    public ProtoTileOutputFormat(String outputPath) {
+        super(outputPath, "pbf");
     }
 
     @Override

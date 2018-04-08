@@ -82,7 +82,7 @@ public class SharedStreetsReference extends TilableData implements Serializable 
             // optional values in proto3 require google Int32Value wrapper classes -- ugh!
 
             if(locationReference.distanceToNextRef != null)
-                lr.setDistanceToNextRef((int)Math.round(locationReference.distanceToNextRef * 100)); // store in centimeter precision
+                lr.setDistanceToNextRef((int)Math.round(locationReference.distanceToNextRef * 100));
 
             if(locationReference.inboundBearing != null)
                 lr.setInboundBearing((int)Math.round(locationReference.inboundBearing));
@@ -188,7 +188,7 @@ public class SharedStreetsReference extends TilableData implements Serializable 
         else
             path = (Polyline)geometry.geometry;
 
-        double length = geometry.length;
+        double length = GeoOp.length(path);
 
         int lprCount;
 
@@ -271,10 +271,6 @@ public class SharedStreetsReference extends TilableData implements Serializable 
                 else
                     intersection.osmNodeId = geometry.metadata.getStartNodeId();
             }
-            else {
-                // synthetic LPRs don't have node IDs
-                intersection.osmNodeId = null;
-            }
 
             intersection.id = SharedStreetsIntersection.generateId(intersection);
 
@@ -334,10 +330,10 @@ public class SharedStreetsReference extends TilableData implements Serializable 
         hashString = "Reference " + ssr.formOfWay.value;
 
         for(SharedStreetsLocationReference lr : ssr.locationReferences) {
-            hashString += String.format(" %.5f %.5f", lr.point.getX(), lr.point.getY());
+            hashString += String.format(" %.6f %.6f", lr.point.getX(), lr.point.getY());
             if(lr.outboundBearing != null) {
                 hashString += String.format(" %d", Math.round(lr.outboundBearing));
-                hashString += String.format(" %d", Math.round(lr.distanceToNextRef)); // hash of distance to next ref in meters -- stored in centimeters
+                hashString += String.format(" %d", Math.round(lr.distanceToNextRef * 100)); // store in centimeter
             }
         }
 
