@@ -15,7 +15,9 @@ import io.sharedstreets.tools.builder.util.UniqueId;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Formatter;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -106,15 +108,16 @@ public class SharedStreetsGeometry extends TilableData implements Serializable {
 
     // generate a stable ref
     public static UniqueId generateId(SharedStreetsGeometry ssg) {
-        String hashString = new String();
+        StringBuilder hashString = new StringBuilder();
+        Formatter formatter = new Formatter((Locale) null);
 
-        hashString = "Geometry";
+        hashString.append("Geometry");
 
         for(int i = 0; i < ((Polyline)ssg.geometry).getPointCount(); i++) {
-            hashString += String.format(" %.5f %.5f", ((Polyline)ssg.geometry).getPoint(i).getX(), ((Polyline)ssg.geometry).getPoint(i).getY());
+            hashString.append(formatter.format(" %.5f %.5f", ((Polyline)ssg.geometry).getPoint(i).getX(), ((Polyline)ssg.geometry).getPoint(i).getY()));
         }
 
-        return UniqueId.generateHash(hashString);
+        return UniqueId.generateHash(hashString.toString());
     }
 
 }

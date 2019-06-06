@@ -3,8 +3,6 @@ package io.sharedstreets.data;
 
 import com.esri.core.geometry.Point;
 import com.esri.core.geometry.Polyline;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.Int32Value;
 import com.jsoniter.annotation.JsonIgnore;
 import io.sharedstreets.data.output.proto.SharedStreetsProto;
 import io.sharedstreets.tools.builder.osm.model.Way;
@@ -20,8 +18,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class SharedStreetsReference extends TilableData implements Serializable {
@@ -329,18 +329,20 @@ public class SharedStreetsReference extends TilableData implements Serializable 
 
     // generate a stable ref
     public static UniqueId generateId(SharedStreetsReference ssr) {
-        String hashString = new String();
+        StringBuilder hashString = new StringBuilder();
+        Formatter formatter = new Formatter((Locale) null);
 
-        hashString = "Reference " + ssr.formOfWay.value;
+        hashString.append("Reference ").append(ssr.formOfWay.value);
 
         for(SharedStreetsLocationReference lr : ssr.locationReferences) {
-            hashString += String.format(" %.5f %.5f", lr.point.getX(), lr.point.getY());
+            hashString.append(formatter.format(" %.5f %.5f", lr.point.getX(), lr.point.getY()));
             if(lr.outboundBearing != null) {
-                hashString += String.format(" %d", Math.round(lr.outboundBearing));
-                hashString += String.format(" %d", Math.round(lr.distanceToNextRef)); // hash of distance to next ref in meters -- stored in centimeters
+                hashString.append(formatter.format(" %d", Math.round(lr.outboundBearing)));
+                // Really stored in centimeters? Formerly distanceToNextRef was multiplied by 100, but not any longer...
+                hashString.append(formatter.format(" %d", Math.round(lr.distanceToNextRef))); // hash of distance to next ref in meters -- stored in centimeters
             }
         }
-        UniqueId id = UniqueId.generateHash(hashString);
+        UniqueId id = UniqueId.generateHash(hashString.toString());
 
         return id;
     }
