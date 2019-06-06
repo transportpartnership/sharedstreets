@@ -11,6 +11,7 @@ import io.sharedstreets.tools.builder.util.geo.TileId;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public class SharedStreetsIntersection extends TilableData implements Comparable, Serializable {
@@ -44,9 +45,7 @@ public class SharedStreetsIntersection extends TilableData implements Comparable
 
     public static UniqueId generateId(SharedStreetsIntersection ssi) {
 
-        String hashString = new String();
-
-        hashString = String.format("Intersection %.5f %.5f", ssi.point.getX(), ssi.point.getY());
+        String hashString = String.format((Locale) null, "Intersection %.5f %.5f", ssi.point.getX(), ssi.point.getY());
 
         // synthetic LPRs don't have node IDs...
         if(ssi.osmNodeId != null)
