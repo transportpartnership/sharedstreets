@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
-
+import java.util.Comparator;
 
 public class ProcessPBF {
 
@@ -58,12 +58,20 @@ public class ProcessPBF {
                 .withArgName("Z-LEVEL")
                 .create() );
 
+        options.addOption( OptionBuilder.withLongOpt( "roadClasses" )
+                .withDescription( "road classes (default '6,4,2,1,0')" )
+                .hasArg()
+                .withArgName("ROAD-CLASSES")
+                .create() );
 
         String inputFile = "";
 
         String outputPath = "";
 
         Integer zLevel = 12 ;
+
+        String roadClasses = "6,4,2,1,0";
+        ArrayList<Way.ROAD_CLASS> filteredClasses = new ArrayList<>();
 
         try {
             // parse the command line arguments
@@ -82,6 +90,22 @@ public class ProcessPBF {
             if(line.hasOption("zlevel")){
                 zLevel = Integer.parseInt(line.getOptionValue("zlevel"));
             }
+
+            if(line.hasOption("roadClasses")){
+                roadClasses = line.getOptionValue("roadClasses");
+            }
+
+            // list of way classes for export tiles (will be sorted to be in sequential order from least to most filtered)
+            for (String roadClass : roadClasses.split(",")) {
+                int roadClassOrdinal = Integer.parseInt(roadClass);
+                filteredClasses.add(Way.ROAD_CLASS.values()[roadClassOrdinal]);
+            }
+            filteredClasses.sort(new Comparator<Way.ROAD_CLASS>() {
+                @Override
+                public int compare(Way.ROAD_CLASS o1, Way.ROAD_CLASS o2) {
+                    return o2.compareTo(o1);
+                }
+            });
         }
         catch( Exception exp ) {
             System.out.println( "Unexpected exception:" + exp.getMessage() );
@@ -102,7 +126,7 @@ public class ProcessPBF {
         File directory = new File(outputPath);
 
         if(directory.exists()) {
-            System.out.println( "Output directory already exists: "  + outputPath);
+            System.out.println("Output directory already exists: " + outputPath);
             return;
         }
 
@@ -111,12 +135,6 @@ public class ProcessPBF {
         // load osm data from PBF input
         OSMDataStream dataStream = new OSMDataStream(inputFile, env);
 
-        // list of way classes for export tiles (must be in sequential order from least to most filtered)
-        ArrayList<Way.ROAD_CLASS> filteredClasses = new ArrayList<>();
-        filteredClasses.add(Way.ROAD_CLASS.ClassUnclassified);
-        filteredClasses.add(Way.ROAD_CLASS.ClassTertiary);
-        filteredClasses.add(Way.ROAD_CLASS.ClassPrimary);
-        filteredClasses.add(Way.ROAD_CLASS.ClassMotorway);
 
         for(Way.ROAD_CLASS filteredClass : filteredClasses) {
 
@@ -141,5 +159,3 @@ public class ProcessPBF {
     }
 
 }
-
-
