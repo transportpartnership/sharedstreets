@@ -33,29 +33,29 @@ public class ProcessPBF {
         // create the Options
         Options options = new Options();
 
-        options.addOption( OptionBuilder.withLongOpt( "input" )
-                .withDescription( "path to input OSM PBF file" )
+        options.addOption( Option.builder().longOpt( "input" )
+                .desc( "path to input OSM PBF file" )
                 .hasArg()
-                .withArgName("INPUT-FILE")
-                .create() );
+                .argName("INPUT-FILE")
+                .build() );
 
-        options.addOption( OptionBuilder.withLongOpt( "output" )
-                .withDescription( "path to output directory (will be created)" )
+        options.addOption( Option.builder().longOpt( "output" )
+                .desc( "path to output directory (will be created)" )
                 .hasArg()
-                .withArgName("OUTPUT-DIR")
-                .create() );
+                .argName("OUTPUT-DIR")
+                .build() );
 
-        options.addOption( OptionBuilder.withLongOpt( "zlevel" )
-                .withDescription( "tile z-level (default 12)" )
+        options.addOption( Option.builder().longOpt( "zlevel" )
+                .desc( "tile z-level (default 12)" )
                 .hasArg()
-                .withArgName("Z-LEVEL")
-                .create() );
+                .argName("Z-LEVEL")
+                .build() );
 
-        options.addOption( OptionBuilder.withLongOpt( "roadClasses" )
-                .withDescription( "road classes (default '6,4,2,1,0')" )
+        options.addOption( Option.builder().longOpt( "roadClasses" )
+                .desc( "road classes (default '6,4,2,1,0')" )
                 .hasArg()
-                .withArgName("ROAD-CLASSES")
-                .create() );
+                .argName("ROAD-CLASSES")
+                .build() );
 
         String inputFile = "";
 
