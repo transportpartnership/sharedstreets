@@ -1,8 +1,6 @@
 package io.sharedstreets.tools.builder;
 
-import io.sharedstreets.data.SharedStreetsGeometry;
 import io.sharedstreets.tools.builder.osm.model.Way;
-import io.sharedstreets.tools.builder.tiles.JSONTileOutputFormat;
 import io.sharedstreets.tools.builder.tiles.ProtoTileOutputFormat;
 import io.sharedstreets.tools.builder.tiles.TilableData;
 import io.sharedstreets.tools.builder.transforms.Intersections;
@@ -11,13 +9,8 @@ import io.sharedstreets.tools.builder.transforms.BaseSegments;
 import io.sharedstreets.tools.builder.transforms.SharedStreetData;
 import io.sharedstreets.tools.builder.util.geo.TileId;
 import org.apache.commons.cli.*;
-import org.apache.flink.api.common.functions.FilterFunction;
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
-import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 
-import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
