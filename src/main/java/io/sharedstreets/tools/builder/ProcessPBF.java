@@ -36,6 +36,7 @@ public class ProcessPBF {
         options.addOption( Option.builder().longOpt( "input" )
                 .desc( "path to input OSM PBF file" )
                 .hasArg()
+                .required()
                 .argName("INPUT-FILE")
                 .build() );
 
